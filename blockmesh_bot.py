@@ -136,7 +136,12 @@ submit_headers = {
 }
 
 def format_proxy(proxy_string):
-    proxy_type, address = proxy_string.split("://")
+    if "://" in proxy_string:
+        proxy_type, address = proxy_string.split("://")
+    else:
+        proxy_type = "http"  # Default to http if no protocol is specified
+        address = proxy_string
+    
     if "@" in address:
         credentials, host_port = address.split("@")
         username, password = credentials.split(":")
@@ -214,15 +219,15 @@ def process_proxy_account(email, password, proxy):
 
 def get_proxies_from_user():
     proxies = []
-    print(f"{Fore.LIGHTBLUE_EX}Enter your proxies (e.g., http://user:pass@host:port). Type 'done' when finished:")
+    print(f"{Fore.LIGHTBLUE_EX}Enter your proxies (e.g., http://user:pass@host:port or host:port). Type 'done' when finished:")
     while True:
         user_input = input(f"{Fore.LIGHTBLUE_EX}Proxy or 'done': {Style.RESET_ALL}").strip()
         if user_input.lower() == "done":
             break
-        if "://" in user_input:
+        if ":" in user_input:
             proxies.append(user_input)
         else:
-            print(f"{Fore.RED}Invalid format! Use http://user:pass@host:port")
+            print(f"{Fore.RED}Invalid format! Use host:port or http://user:pass@host:port")
     return proxies
 
 def get_accounts_from_user(num_accounts):
